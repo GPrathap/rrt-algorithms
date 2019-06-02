@@ -8,7 +8,7 @@ from src.utilities.plotting_cpp import Plot
 trees = np.load('/dataset/edges.npy')
 path_rrt = np.load('/dataset/rrt_path.npy')
 path_bspline = np.load('/dataset/rrt_path_modified.npy')
-path_catmull = np.load('/dataset/rrt_path_modified_catmull.npy')
+# path_catmull = np.load('/dataset/rrt_path_modified_catmull.npy')
 
 obstacles = np.load('/dataset/obstacles.npy')
 start_and_end_pose = np.load('/dataset/start_and_end_pose.npy')
