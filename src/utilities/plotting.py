@@ -135,12 +135,16 @@ class Plot(object):
             )
 
             self.data.append(trace)
-        elif X.dimensions == 3:  # plot in 3D
+        else:
             x, y, z = [], [], []
-            for i in path:
-                x.append(i[0])
-                y.append(i[1])
-                z.append(i[2])
+            for i in range(0, len(path[0])):
+                x.append(path[:,i][0])
+                y.append(path[:,i][1])
+                z.append(path[:,i][2])
+            # for i in path:
+            #     x.append(i[0])
+            #     y.append(i[1])
+            #     z.append(i[2])
             trace = go.Scatter3d(
                 x=x,
                 y=y,
@@ -153,8 +157,6 @@ class Plot(object):
             )
 
             self.data.append(trace)
-        else:  # can't plot in higher dimensions
-            print("Cannot plot in > 3 dimensions")
 
     def plot_start(self, X, x_init):
         """

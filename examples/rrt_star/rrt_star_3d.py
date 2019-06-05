@@ -5,7 +5,6 @@ import numpy as np
 from src.rrt.rrt_star import RRTStar
 from src.search_space.search_space import SearchSpace
 from src.utilities.plotting import Plot
-
 X_dimensions = np.array([(0, 100), (0, 100), (0, 100)])  # dimensions of Search Space
 # obstacles
 Obstacles = np.array(

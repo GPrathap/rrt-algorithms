@@ -35,8 +35,10 @@ class RRTStar(RRT):
         :return: list of nearby vertices and their costs, sorted in ascending order by cost
         """
         X_near = self.nearby(tree, x_new, self.current_rewire_count(tree))
-        L_near = [(path_cost(self.trees[tree].E, x_init, x_near) + segment_cost(x_near, x_new), x_near) for
-                  x_near in X_near]
+        L_near = []
+        for x_near in X_near:
+            L_near.append((path_cost(self.trees[tree].E, x_init, x_near) + segment_cost(x_near, x_new), x_near))
+
         # noinspection PyTypeChecker
         L_near.sort(key=itemgetter(0))
 
