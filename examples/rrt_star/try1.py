@@ -47,3 +47,50 @@ from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
 # plt.scatter(points[:,0], points[:,1])
 # plt.show()
 
+
+def draw_from_ellipsoid(covmat, cent, npts):
+    # random uniform points within ellipsoid as per: http://www.astro.gla.ac.uk/~matthew/blog/?p=368
+    ndims = covmat.shape[0]
+
+    # calculate eigenvalues (e) and eigenvectors (v)
+    eigenValues, eigenVectors = np.linalg.eig(covmat)
+    idx = (-eigenValues).argsort()[::-1][:ndims]
+    e = eigenValues[idx]
+    v = eigenVectors[:, idx]
+    e = np.diag(e)
+
+    # generate radii of hyperspheres
+    rs = np.random.uniform(0, 1, npts)
+
+    # generate points
+    pt = np.random.normal(0, 1, [npts, ndims]);
+
+    # get scalings for each point onto the surface of a unit hypersphere
+    fac = np.sum(pt ** 2, axis=1)
+
+    # calculate scaling for each point to be within the unit hypersphere
+    # with radii rs
+    fac = (rs ** (1.0 / ndims)) / np.sqrt(fac)
+
+    pnts = np.zeros((npts, ndims));
+
+    # scale points to the ellipsoid using the eigenvalues and rotate with
+    # the eigenvectors and add centroid
+    d = np.sqrt(np.diag(e))
+    d.shape = (ndims, 1)
+
+    for i in range(0, npts):
+        # scale points to a uniform distribution within unit hypersphere
+        pnts[i, :] = fac[i] * pt[i, :]
+        pnts[i, :] = np.dot(np.multiply(pnts[i, :], np.transpose(d)), np.transpose(v)) + cent
+
+    return pnts
+
+
+
+covmat = np.diag((7, 4, 4))
+pnts = draw_from_ellipsoid(covmat, 0, 100000)
+plt.scatter(pnts[:,0], pnts[:,1], pnts[:,2])
+plt.show()
+
+
