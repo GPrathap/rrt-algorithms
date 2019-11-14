@@ -7,21 +7,21 @@ from src.utilities.plotting_cpp import Plot
 #/home/geesara/project/rrt-algorithms/start_and_end_pose.npy
 
 
-index = 100
+index = 0
 trees = np.load('/dataset/rrt/'+str(index)+'_edges.npy')
 path_rrt = np.load('/dataset/rrt/'+str(index)+'_rrt_star_path.npy')
-# path_bspline = np.load('/dataset/rrt/rrt_path_modified.npy')
+path_bspline = np.load('/dataset/rrt/'+str(index)+'_rrt_path_modified.npy')
 # path_catmull = np.load('/dataset/rrt_path_modified_catmull.npy')
 
 obstacles = np.load('/dataset/rrt/'+str(index)+'_obstacles.npy')
 
 start_and_end_pose = np.load('/dataset/rrt/'+str(index)+'_start_and_end_pose.npy')
 
-trees = np.load('/dataset/edges.npy')
-path_rrt = np.load('/dataset/rrt_path.npy')
-path_bspline = np.load('/dataset/rrt_path_modified.npy')
-obstacles = np.load('/dataset/obstacles.npy')
-start_and_end_pose = np.load('/dataset/start_and_end_pose.npy')
+# trees = np.load('/dataset/edges.npy')
+# path_rrt = np.load('/dataset/rrt_path.npy')
+# path_bspline = np.load('/dataset/rrt_path_modified.npy')
+# obstacles = np.load('/dataset/obstacles.npy')
+# start_and_end_pose = np.load('/dataset/start_and_end_pose.npy')
 # path_catmull = np.load('/dataset/rrt_path_modified_catmull.npy')
 
 
@@ -50,3 +50,4 @@ plot.plot_obstacles(obstacles)
 plot.plot_start(start_and_end_pose[0:3])
 plot.plot_goal(start_and_end_pose[3:6])
 plot.draw(auto_open=True)
+

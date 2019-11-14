@@ -137,14 +137,14 @@ class Plot(object):
             self.data.append(trace)
         else:
             x, y, z = [], [], []
-            for i in range(0, len(path[0])):
-                x.append(path[:,i][0])
-                y.append(path[:,i][1])
-                z.append(path[:,i][2])
-            # for i in path:
-            #     x.append(i[0])
-            #     y.append(i[1])
-            #     z.append(i[2])
+            # for i in range(0, len(path[0])):
+            #     x.append(path[:,i][0])
+            #     y.append(path[:,i][1])
+            #     z.append(path[:,i][2])
+            for i in path:
+                x.append(i[0])
+                y.append(i[1])
+                z.append(i[2])
             trace = go.Scatter3d(
                 x=x,
                 y=y,

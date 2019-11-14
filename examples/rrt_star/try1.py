@@ -167,10 +167,9 @@ def draw_from_ellipsoid(covmat, cent, npts):
 
 
 covmat = np.diag((7, 4, 4))
-# pnts = draw_from_ellipsoid(covmat, 0, 10)
-
-samples = np.load('/dataset/1random_samples.npy')
-pnts = samples
+# pnts = draw_from_ellipsoid(covmat, 0, 10000)
+pnts = np.load('/home/geesara/Desktop/searchspace/1_search_space.npy')[0]
+print(pnts)
 plt.scatter(pnts[:,0], pnts[:,1], pnts[:,2])
 plt.show()
 
