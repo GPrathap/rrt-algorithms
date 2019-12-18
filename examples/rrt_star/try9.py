@@ -6,12 +6,12 @@ import numpy as np
 
 data = np.loadtxt('/home/geesara/Desktop/testdata/benchmarking_time_stamps.txt', delimiter=',')
 
-plt.rcParams.update({'font.size': 35})
+plt.rcParams.update({'font.size': 38})
 
 plt.rcParams['pdf.fonttype'] = 42
 plt.rcParams['ps.fonttype'] = 42
 
-f_size = (8,7)
+f_size = (6,5)
 
 plt.figure(figsize=f_size)
 plt.hist(data[:,0][100:]/1e6, 100)

@@ -3,6 +3,7 @@
 
 import plotly as py
 from plotly import graph_objs as go
+import plotly.express as px
 from numpy import sin, cos, pi
 import numpy as np
 colors = ['darkblue', 'teal']
@@ -68,7 +69,8 @@ class Plot(object):
                     i=[7, 0, 0, 0, 4, 4, 6, 6, 4, 0, 3, 2],
                     j=[3, 4, 1, 2, 5, 6, 5, 2, 0, 1, 6, 3],
                     k=[0, 7, 2, 3, 6, 7, 1, 1, 5, 5, 7, 6],
-                    color='#A6ACAF',
+                    color='#000000',
+                    # color='#A6ACAF',
                     opacity=0.90,
                     name="Obstacles",
                 )
@@ -138,47 +140,74 @@ class Plot(object):
 
         self.data.append(surface)
 
+    def rotation_matrix_from_vectors(self, vec1, vec2):
+        """ Find the rotation matrix that aligns vec1 to vec2
+        :param vec1: A 3d "source" vector
+        :param vec2: A 3d "destination" vector
+        :return mat: A transform matrix (3x3) which when applied to vec1, aligns it with vec2.
+        """
+        a, b = (vec1 / np.linalg.norm(vec1)).reshape(3), (vec2 / np.linalg.norm(vec2)).reshape(3)
+        v = np.cross(a, b)
+        c = np.dot(a, b)
+        s = np.linalg.norm(v)
+        kmat = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
+        rotation_matrix = np.eye(3) + kmat + kmat.dot(kmat) * ((1 - c) / (s ** 2))
+        return rotation_matrix
+
     def draw_ellipsoid(self, start_end):
         # phi = np.linspace(0, 2 * pi)
         # theta = np.linspace(-pi / 2, pi / 2)
         # phi, theta = np.meshgrid(phi, theta)
         #
         #
-        dis = np.abs(start_end[0] - start_end[4])
+        dis_x = np.abs(start_end[0] - start_end[3])
+        dis_y = np.abs(start_end[1] - start_end[4])
+        dis_z = np.abs(start_end[2] - start_end[5])
         # x = (start_end[0] + start_end[3])/2 + cos(theta) * sin(phi) * dis
         # y = (start_end[1] + start_end[4])/2 + cos(theta) * cos(phi) * 40
         # z = (start_end[2] + start_end[5])/2 + sin(theta)*40
 
         # your ellispsoid and center in matrix form
-        A1 = np.array([[dis, 0, 0], [0, 20, 0], [0, 0, 20]])
+        A1 = np.array([[dis_x, 0, 0], [0, dis_y, 0], [0, 0, dis_z]])
         center = [(start_end[0] + start_end[3])/2, (start_end[1] + start_end[4])/2  , (start_end[2] + start_end[5])/2 ]
 
-        A = np.array([-1, 0, 0])
-        B = np.array([start_end[3] - start_end[0], start_end[4] - start_end[1], start_end[5] - start_end[2]])
+        # A = np.array([-1, 0, 0])
+        # B = np.array([start_end[3] - start_end[0], start_end[4] - start_end[1], start_end[5] - start_end[2]])
+        # A = np.array(start_end[0:3])
+        # B = np.array(start_end[3:6])
 
-
-
-
-        bx = start_end[3] - start_end[0]
-        by = start_end[4] - start_end[1]
-        bz = start_end[5] - start_end[2]
+        A = np.array([0,0,1])
+        B = np.array([1, 0, 0])
 
 
 
         # a = A / (linalg.norm(A))
-        a = A / (linalg.norm(A))
-        b = B / (linalg.norm(B))
-        v =  np.cross(a, b)
-        s = linalg.norm(v)
-        c = a.dot(b)
-        vx = np.array([[0, -v[2], v[1]],
-                     [v[2], 0, v[0]],
-                     [v[1], v[0], 0]])
-        r = np.identity(3, dtype=float)
 
-        r = r + vx + vx*vx*((1-c)/np.sqrt(s))
+        anorm = linalg.norm(A)
+        a  = A
+        if(anorm>0):
+            a = A / (linalg.norm(A))
+        bnorm = (linalg.norm(B))
+        b = B
+        if (bnorm > 0):
+            b = B / (linalg.norm(B))
 
-        rotation = r
+        # v =  np.cross(a, b)
+        # s = linalg.norm(v)
+        # c = a.dot(b)
+        # vx = np.array([[0, -v[2], v[1]],
+        #              [v[2], 0, v[0]],
+        #              [v[1], v[0], 0]])
+        # r = np.identity(3, dtype=float)
+        # if (s != 0):
+        #     r = r + vx + vx*vx*((1-c)/np.sqrt(s))
+        # rotation = r
+
+        v = np.cross(a, b)
+        c = np.dot(a, b)
+        s = np.linalg.norm(v)
+        kmat = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
+        rotation = np.eye(3) + kmat + kmat.dot(kmat) * ((1 - c) / (s ** 2))
 
 
         # find the rotation matrix and radii of the axes
@@ -188,9 +217,9 @@ class Plot(object):
         # now carry on with EOL's answer
         u = np.linspace(0.0, 2.0 * np.pi, 100)
         v = np.linspace(0.0, np.pi, 100)
-        x = (dis/2.5) * np.outer(np.cos(u), np.sin(v))
-        y = 20 * np.outer(np.sin(u), np.sin(v))
-        z = 20 * np.outer(np.ones_like(u), np.cos(v))
+        x = dis_x * np.outer(np.cos(u), np.sin(v))
+        y = dis_y * np.outer(np.sin(u), np.sin(v))
+        z = dis_z * np.outer(np.ones_like(u), np.cos(v))
 
         for i in range(len(x)):
             for j in range(len(x)):
@@ -222,6 +251,69 @@ class Plot(object):
                 color=color,
                 width=width,
             ),
+            mode=mode
+        )
+
+        self.data.append(trace)
+
+    def plot_points(self, path, color, name, width, mode):
+        """
+        Plot path through Search Space
+        :param X: Search Space
+        :param path: path through space given as a sequence of points
+        """
+        A = np.array([1, 0, 0])
+        B = np.array([0, 0, 1])
+
+        # a = A / (linalg.norm(A))
+
+        anorm = linalg.norm(A)
+        a = A
+        if (anorm > 0):
+            a = A / (linalg.norm(A))
+        bnorm = (linalg.norm(B))
+        b = B
+        if (bnorm > 0):
+            b = B / (linalg.norm(B))
+
+        # v =  np.cross(a, b)
+        # s = linalg.norm(v)
+        # c = a.dot(b)
+        # vx = np.array([[0, -v[2], v[1]],
+        #              [v[2], 0, v[0]],
+        #              [v[1], v[0], 0]])
+        # r = np.identity(3, dtype=float)
+        # if (s != 0):
+        #     r = r + vx + vx*vx*((1-c)/np.sqrt(s))
+        # rotation = r
+        # print rotation
+
+        v = np.cross(a, b)
+        c = np.dot(a, b)
+        s = np.linalg.norm(v)
+        kmat = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
+        rotation = np.eye(3)
+        if (s != 0):
+            rotation = rotation + kmat + kmat.dot(kmat) * ((1 - c) / (s ** 2))
+
+        print rotation
+        x, y, z = [], [], []
+        for i in path:
+            # print(i)
+            # rotated = np.dot([i[0], i[1], i[2]], rotation)
+            rotated = np.array([i[0], i[1], i[2]])
+            x.append(rotated[0])
+            y.append(rotated[1])
+            z.append(rotated[2])
+        trace = go.Scatter3d(
+            x=x,
+            y=y,
+            z=z,
+            name=name,
+            # line=dict(
+            #     color=color,
+            #     width=width,
+            # ),
             mode=mode
         )
 
