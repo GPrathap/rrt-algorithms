@@ -8,7 +8,8 @@ from numpy import sin, cos, pi
 import numpy as np
 colors = ['darkblue', 'teal']
 import numpy.linalg as linalg
-
+from numpy import cross, eye, dot
+from scipy.linalg import expm, norm
 
 class Plot(object):
     def __init__(self, filename):
@@ -69,12 +70,41 @@ class Plot(object):
                     i=[7, 0, 0, 0, 4, 4, 6, 6, 4, 0, 3, 2],
                     j=[3, 4, 1, 2, 5, 6, 5, 2, 0, 1, 6, 3],
                     k=[0, 7, 2, 3, 6, 7, 1, 1, 5, 5, 7, 6],
-                    color='#000000',
-                    # color='#A6ACAF',
+                    # color='#000000',
+                    color='#A6ACAF',
                     opacity=0.90,
                     name="Obstacles",
                 )
                 self.data.append(obs)
+
+    def M(self, axis, theta):
+        return expm(cross(eye(3), axis / norm(axis) * theta))
+
+    def plot_search_space(self, search_space, color, name, size_, type_):
+        x, y, z = [], [], []
+        r = np.identity(3, dtype=float)
+        for i in search_space:
+            # print(i)
+            v, axis1, theta = [i[0],i[1], i[2]], [0, 0, 1], 1.6
+            M0 = self.M(axis1, theta)
+            i = dot(M0, v)
+            # print(i)
+            x.append(i[0])
+            y.append(i[1])
+            z.append(i[2])
+            trace = go.Scatter3d(
+                x=x,
+                y=y,
+                z=z,
+                name=name,
+                line=dict(
+                    color= color,
+                    width=0.3,
+                ),
+                # mode=mode
+                opacity=0.09
+            )
+        self.data.append(trace)
 
 
     def draw_ellipsoid_only(self, start_end):
@@ -303,7 +333,7 @@ class Plot(object):
             # rotated = np.dot([i[0], i[1], i[2]], rotation)
             rotated = np.array([i[0], i[1], i[2]])
             x.append(rotated[0])
-            y.append(rotated[1])
+            y.append (rotated[1])
             z.append(rotated[2])
         trace = go.Scatter3d(
             x=x,

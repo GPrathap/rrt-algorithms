@@ -10,7 +10,7 @@ import pandas as pd
 #/home/geesara/project/rrt-algorithms/start_and_end_pose.npy
 
 
-index = 0
+# index = 0
 
 # path_rrt = np.load('/home/geesara/Desktop/trajectory_planning_pose.csv')
 #
@@ -21,7 +21,7 @@ index = 0
 
 # location  = "/home/geesara/Desktop/searchspace/rrt/"
 location  = "/home/geesara/Desktop/testdata/"
-index = 0
+index = 45
 
 dataset_loc = location + str(index) + "_"
 trees = np.load( dataset_loc + 'edges.npy')
@@ -31,8 +31,8 @@ path_rrt  = np.load( dataset_loc + 'rrt_star_path.npy')
 obstacles = np.load( dataset_loc + 'obstacles.npy')
 # obstacles = np.load('/home/geesara/Desktop/searchspace/100_search_space.npy')
 start_and_end_pose = np.load(dataset_loc + 'start_and_end_pose.npy')
-path_modified = np.load(dataset_loc +  'rrt_path_modified.npy')
-search_space = np.load(dataset_loc +  '_search_space.npy')[0]
+path_modified = np.load(dataset_loc +  'rrt_star_dynamics_path.npy')
+# search_space = np.load(dataset_loc +  '_search_space.npy')[0]
 # index = 134
 #
 trees = np.load(dataset_loc + 'edges.npy')
@@ -62,7 +62,7 @@ plot = Plot("rrt_star_3d")
 # data = pd.read_csv("/home/geesara/project/quadrotor/traj_planning/fff", header=None)
 # path_rrt = np.array(data)
 #
-plot.plot_points(search_space, "orange", "Original RRT*", 10, "markers")
+# plot.plot_points(search_space, "orange", "Original RRT*", 10, "markers")
 # plot.plot_trajectory_with_path(path_rrt, path_rrt_ori, "red")
 # plot.plot_path(search_space, "orange", "Original RRT*", 10, "lines+markers")
 # plot.plot_path(path_modified, "green", "Smoothed (Original RRT*)", 10, "lines")
